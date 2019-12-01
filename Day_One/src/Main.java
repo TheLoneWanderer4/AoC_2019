@@ -13,21 +13,22 @@ public class Main {
     }
 
     public static int calcRequiredFuel(int mass){
-        int fuel = calcFuelMass(mass);
-        int fuelForFuel = calcFuelFuel(fuel);
-        return fuel + fuelForFuel;
+        int fuelForInitMass = calcFuelForMass(mass);
+        int fuelForFuel = calcFuelForFuel(fuelForInitMass);
+        return fuelForInitMass + fuelForFuel;
     }
 
-    public static int calcFuelMass(int mass){
+    public static int calcFuelForMass(int mass){
         return mass / 3 - 2;
     }
-    public static int calcFuelFuel(int fuelMass){
-        int fuel = calcFuelMass(fuelMass);
-        System.out.println(fuel);
-        if(fuel <= 0){
+
+    public static int calcFuelForFuel(int fuelMass){
+        int currFuel = calcFuelForMass(fuelMass);
+        System.out.println(currFuel);
+        if(currFuel <= 0){
             return 0;
         }else{
-            return fuel + calcFuelFuel(fuel);
+            return currFuel + calcFuelForFuel(currFuel);
         }
     }
 
