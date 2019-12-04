@@ -12,11 +12,18 @@ public class Wire {
         end = new Cord(0,0);
     }
 
+    public List<Cord> getList(){
+        return path;
+    }
+
     private List<Cord> genLineBetweenCords(Cord one, Cord two){
         List<Cord> ret = new ArrayList<>();
+
         int start = 0;
         int end = 0;
+
         boolean horizontal = false;
+
         if(one.x == two.x){
             start = one.y;
             end = two.y;
@@ -47,14 +54,29 @@ public class Wire {
         return end;
     }
 
-    public Set<Cord> calcIntersections(Wire other){
-        Set<Cord> ret = new HashSet<>(path);
-        ret.retainAll(other.path);
+    public List<Cord> calcIntersections(Wire other){
+        List<Cord> ret = new ArrayList<>();
+        for(Cord x : path){
+            if(other.getList().contains(x)){
+                ret.add(x);
+            }
+        }
         return ret;
     }
 
     public int getStepsTo(Cord c){
-        return path.indexOf(c);
+        if(c.equals(new Cord(0,0))){
+            return Integer.MAX_VALUE/2;
+        }else{
+            int ret = 0;
+            for(Cord x : path){
+                if(x.equals(c)){
+                    return ret;
+                }
+                ret += 1;
+            }
+        }
+        return -1;
     }
 
     @Override

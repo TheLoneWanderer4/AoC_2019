@@ -1,5 +1,6 @@
 import AOC.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -12,8 +13,6 @@ public class Main {
         Wire wire = new Wire();
 
         for(String turn : wirePath){
-            Line v;
-
             char direction = turn.charAt(0);
             int distance = Integer.parseInt(turn.substring(1));
 
@@ -43,20 +42,23 @@ public class Main {
 
     public static void main(String[] args){
         String[] input = Input.getData();
+
         Wire one = parseWire(input[0]);
         Wire two = parseWire(input[1]);
 
-        Set<Cord> intersections = one.calcIntersections(two);
-        intersections.remove(new Cord(0,0));
+        List<Cord> intersections = one.calcIntersections(two);
 
         int min = Integer.MAX_VALUE;
         int minSteps = Integer.MAX_VALUE;
 
         for(Cord x : intersections){
-            if(x.distFrom0() < min){
-                min = x.distFrom0();
+            int dist = x.distFrom0();
+            if(dist < min){
+                min = dist;
             }
+
             int steps = one.getStepsTo(x) + two.getStepsTo(x);
+
             if(steps < minSteps){
                 minSteps = steps;
             }

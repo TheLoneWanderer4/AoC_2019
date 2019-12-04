@@ -45,12 +45,11 @@ public class Cord{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cord cord = (Cord) o;
-        return x == cord.x &&
-                y == cord.y;
+        return x == cord.x && y == cord.y;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Integer.hashCode(x) * Integer.hashCode(y);
     }
 }
