@@ -48,24 +48,31 @@ public class IntCode {
         workingMemory[1] = noun;
         workingMemory[2] = verb;
 
-        for(int i = 0; i< workingMemory.length-1; i+=4){
+        for(int i = 0; i< workingMemory.length-1; i+=0){
             int command = workingMemory[i];
-
-            int indexOne = workingMemory[i+1];
-            int indexTwo = workingMemory[i+2];
-            int placeIndex = workingMemory[i+3];
 
             if(command == 99){
                 break;
-            }
-
-            switch (command){
-                case 1:
-                    add(indexOne, indexTwo, placeIndex);
-                    break;
-                case 2:
-                    multiply(indexOne, indexTwo, placeIndex);
-                    break;
+            }else if(command == 1){
+                int indexOne = workingMemory[i+1];
+                int indexTwo = workingMemory[i+2];
+                int placeIndex = workingMemory[i+3];
+                add(indexOne, indexTwo, placeIndex);
+                i+=4;
+            }else if(command == 2){
+                int indexOne = workingMemory[i+1];
+                int indexTwo = workingMemory[i+2];
+                int placeIndex = workingMemory[i+3];
+                multiply(indexOne, indexTwo, placeIndex);
+                i+=4;
+            }else if(command == 3){
+                int index = workingMemory[i+1];
+                workingMemory[index] = index;
+                i+=2;
+            }else if(command == 4){
+                int index = workingMemory[i+1];
+                System.out.println(workingMemory[index]);
+                i+=2;
             }
         }
         //reset the memory back to stock and return
