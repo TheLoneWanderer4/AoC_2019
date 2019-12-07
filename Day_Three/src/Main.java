@@ -58,7 +58,6 @@ public class Main {
             }
 
             int steps = one.getStepsTo(x) + two.getStepsTo(x);
-
             if(steps < minSteps){
                 minSteps = steps;
             }

@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 
 public class Wire {
     private List<Cord> path;
@@ -35,13 +36,10 @@ public class Wire {
             System.out.println("Unknown path");
         }
 
-        for(int i = start; (start>end ? i>=end : i<=end); i = (start>end ? i-1 : i+1)){
+        for(int i = start>end ? start-1 : start+1; (start>end ? i>=end : i<=end); i = (start>end ? i-1 : i+1)){
             Cord newCord = horizontal ? new Cord(i,one.y) : new Cord(one.x,i);
-            if(!path.contains(newCord)){
-                ret.add(newCord);
-            }
+            ret.add(newCord);
         }
-
         return ret;
     }
 
@@ -65,13 +63,13 @@ public class Wire {
     }
 
     public int getStepsTo(Cord c){
-        if(c.equals(new Cord(0,0))){
+        if(c.x == 0 && c.y == 0){
             return Integer.MAX_VALUE/2;
         }else{
             int ret = 0;
             for(Cord x : path){
-                if(x.equals(c)){
-                    return ret;
+                if(x.x == c.x && x.y == c.y){
+                    return ret+1;
                 }
                 ret += 1;
             }
