@@ -1,12 +1,14 @@
 package AOC;
 
-import java.io.PipedReader;
 import java.util.Scanner;
 
 public class IntCode {
     private int[] workingMemory;
-
     private int[] originalMemory;
+
+    private int i = 0;
+    // memory pointer, the most important of all the things
+
 
     public int[] getWorkingMemory(){
         return workingMemory.clone();
@@ -91,11 +93,22 @@ public class IntCode {
         return 2;
     }
 
+    private int input(int i, int command, int input){
+        int index = get(i+1, command);
+        workingMemory[index] = input;
+        return 2;
+    }
+
     private int print(int i, int command){
         int index = get(i+1, command);
         System.out.println(workingMemory[index]);
 
         return 2;
+    }
+
+    private int returnPrint(int i, int command){
+        int index = get(i+1, command);
+        return workingMemory[index];
     }
 
     private int jumpIfTrue(int i, int command){
@@ -140,13 +153,37 @@ public class IntCode {
         return 4;
     }
 
-    public int run(){
-        int i = 0;
+    /**
+     *
+     * @param mode, Okay, there are three settings.
+     *
+     *              N, normal, input will prompt the commandline, output will
+     *                  print.
+     *
+     *              S, sequences, give the function a list of integers
+     *                  containing, in order, the inputs your program needs.
+     *                  As each input is called it will grab the next element
+     *                  from the list.
+     *
+     *              C, single, grabs the last element from the passed inputs
+     *                  array and uses it for all input calls.
+     *
+     *              Both S and C will return rather than print
+     *
+     * @param inputs, a list of integers, the inputs
+     * @return, if mode is true, then will return in response to the 4 command
+     *          otherwise, will return the value at memory index 0
+     */
+
+    public int run(char mode, int[] inputs){
+        int inputIndex = 0;
+
         while(i < workingMemory.length){
             int command = workingMemory[i];
-            int[] codes = null;
 
             if(command == 99){
+                this.workingMemory = originalMemory.clone();
+                i = 0;
                 break;
             }
 
@@ -159,9 +196,22 @@ public class IntCode {
             }else if(operation == 2){
                 i += multiply(i, command);
             }else if(operation == 3){
-                i += input(i, command);
+                if(mode == 'N'){
+                    i += input(i, command);
+                }else if(mode == 'S'){
+                    i += input(i, command, inputs[inputIndex]);
+                    inputIndex += 1;
+                }else if(mode == 'C'){
+                    i += input(i, command, inputs[inputs.length-1]);
+                }
             }else if(operation == 4){
-                i += print(i, command);
+                if(mode == 'N'){
+                    i += print(i, command);
+                }else if(mode == 'S' || mode == 'C'){
+                    int pass = i;
+                    i += 2;
+                    return returnPrint(pass, command);
+                }
             }else if(operation == 5){
                 i = jumpIfTrue(i, command);
             }else if(operation == 6){
@@ -175,11 +225,8 @@ public class IntCode {
                 i+=1;
             }
         }
-
-        //reset the memory back to stock and return
-        int ret = workingMemory[0];
-        this.workingMemory = originalMemory.clone();
-        return ret;
+        // return -1 if the program completes but doesn't return anything
+        return -1;
     }
 
     public int bruteForceInputs(int output){
@@ -188,7 +235,7 @@ public class IntCode {
                 // run the program with the given inputs
                 workingMemory[1] = i;
                 workingMemory[2] = j;
-                int result = run();
+                int result = run('N', null);
 
                 if(result == output){
                     // case specific for day two test, likely to change in the future

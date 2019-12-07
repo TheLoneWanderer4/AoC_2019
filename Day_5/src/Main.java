@@ -6,6 +6,6 @@ public class Main {
 
         IntCode computer = new IntCode(input[0]);
 
-        int x = computer.run();
+        int x = computer.run(null);
     }
 }
