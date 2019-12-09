@@ -3,32 +3,37 @@ package AOC;
 import java.util.Scanner;
 
 public class IntCode {
-    private int[] workingMemory;
-    private int[] originalMemory;
+    private long[] workingMemory;
+    private long[] originalMemory;
 
     private int i = 0;
     // memory pointer, the most important of all the things
+    private long relativeBase = 0;
 
-
-    public int[] getWorkingMemory(){
+    public long[] getWorkingMemory(){
         return workingMemory.clone();
     }
 
-    public int[] getOriginalMemory(){
+    public long[] getOriginalMemory(){
         return originalMemory.clone();
     }
 
-    public IntCode(int[] input){
+    public IntCode(long[] input){
         // clone so was to not change other computers memory
-        this.workingMemory = input.clone();
-        this.originalMemory = input.clone();
+        long[] hold = new long[input.length*input.length];
+        for(int i = 0; i < input.length; i++){
+            hold[i] = input[i];
+        }
+
+        this.workingMemory = hold.clone();
+        this.originalMemory = hold.clone();
     }
 
-    private static int[] parseInput(String input){
+    private static long[] parseInput(String input){
         String[] toUpdate = input.split(",");
-        int[] ret = new int[toUpdate.length];
+        long[] ret = new long[toUpdate.length];
         for(int i = 0; i<ret.length; i++){
-            ret[i] = Integer.parseInt(toUpdate[i]);
+            ret[i] = Long.parseLong(toUpdate[i]);
         }
         return ret;
     }
@@ -42,11 +47,13 @@ public class IntCode {
         originalMemory = other.originalMemory.clone();
     }
 
-    private int get(int i, int opp){
+    private int getIndex(int i, int opp){
         if(opp == 1){;
             return i;
+        }else if(opp == 2){
+            return Math.toIntExact(workingMemory[i] + relativeBase);
         }else{
-            return workingMemory[i];
+            return Math.toIntExact(workingMemory[i]);
         }
     }
 
@@ -61,14 +68,18 @@ public class IntCode {
         return ret;
     }
 
-    private int add(int i, int command){
+    private int updateBase(int i, int command){
+        long param = workingMemory[getIndex(i+1, command)];
+        relativeBase += param;
+        return 2;
+    }
 
+    private int add(int i, int command){
         int[] ops = parseParamCode(command, 3);
 
-        int indexOne = get(i+1, ops[0]);
-        int indexTwo = get(i+2, ops[1]);
-        int placeIndex = get(i+3, ops[2]);
-
+        int indexOne = getIndex(i+1, ops[0]);
+        int indexTwo = getIndex(i+2, ops[1]);
+        int placeIndex = getIndex(i+3, ops[2]);
 
         workingMemory[placeIndex] = workingMemory[indexOne] + workingMemory[indexTwo];
         return 4;
@@ -77,9 +88,9 @@ public class IntCode {
     private int multiply(int i, int command){
         int[] ops = parseParamCode(command, 3);
 
-        int indexOne = get(i+1, ops[0]);
-        int indexTwo = get(i+2, ops[1]);
-        int placeIndex = get(i+3, ops[2]);
+        int indexOne = getIndex(i+1, ops[0]);
+        int indexTwo = getIndex(i+2, ops[1]);
+        int placeIndex = getIndex(i+3, ops[2]);
 
         workingMemory[placeIndex] = workingMemory[indexOne] * workingMemory[indexTwo];
         return 4;
@@ -88,43 +99,43 @@ public class IntCode {
     private int input(int i, int command){
         Scanner reader = new Scanner(System.in);
 
-        int index = get(i+1, command);
+        int index = getIndex(i+1, command);
         workingMemory[index] = Integer.parseInt(reader.nextLine());
         return 2;
     }
 
     private int input(int i, int command, int input){
-        int index = get(i+1, command);
+        int index = getIndex(i+1, command);
         workingMemory[index] = input;
         return 2;
     }
 
     private int print(int i, int command){
-        int index = get(i+1, command);
+        int index = getIndex(i+1, command);
         System.out.println(workingMemory[index]);
 
         return 2;
     }
 
-    private int returnPrint(int i, int command){
-        int index = get(i+1, command);
+    private long returnPrint(int i, int command){
+        int index = getIndex(i+1, command);
         return workingMemory[index];
     }
 
     private int jumpIfTrue(int i, int command){
         int[] ops = parseParamCode(command, 2);
-        int param = workingMemory[get(i+1, ops[0])];
+        long param = workingMemory[getIndex(i+1, ops[0])];
         if(param != 0){
-            return workingMemory[get(i+2, ops[1])];
+            return Math.toIntExact(workingMemory[getIndex(i+2, ops[1])]);
         }
         return i+3;
     }
 
     private int jumpIfFalse(int i, int command){
         int[] ops = parseParamCode(command, 2);
-        int param = workingMemory[get(i+1, ops[0])];
+        long param = workingMemory[getIndex(i+1, ops[0])];
         if(param == 0){
-            return workingMemory[get(i+2, ops[1])];
+            return Math.toIntExact(workingMemory[getIndex(i+2, ops[1])]);
         }
         return i+3;
     }
@@ -132,10 +143,10 @@ public class IntCode {
     private int lessThan(int i, int command){
         int[] ops = parseParamCode(command, 3);
 
-        int itemOne = workingMemory[get(i+1, ops[0])];
-        int itemTwo = workingMemory[get(i+2, ops[1])];
+        long itemOne = workingMemory[getIndex(i+1, ops[0])];
+        long itemTwo = workingMemory[getIndex(i+2, ops[1])];
 
-        int placeIndex = get(i+3, ops[2]);
+        int placeIndex = getIndex(i+3, ops[2]);
 
         workingMemory[placeIndex] = itemOne < itemTwo ? 1 : 0;
 
@@ -144,9 +155,9 @@ public class IntCode {
 
     private int equal(int i, int command){
         int[] ops = parseParamCode(command, 3);
-        int itemOne = workingMemory[get(i+1, ops[0])];
-        int itemTwo = workingMemory[get(i+2, ops[1])];
-        int placeIndex = get(i+3, ops[2]);
+        long itemOne = workingMemory[getIndex(i+1, ops[0])];
+        long itemTwo = workingMemory[getIndex(i+2, ops[1])];
+        int placeIndex = getIndex(i+3, ops[2]);
 
         workingMemory[placeIndex] = itemOne == itemTwo ? 1 : 0;
 
@@ -175,11 +186,11 @@ public class IntCode {
      *          otherwise, will return the value at memory index 0
      */
 
-    public int run(char mode, int[] inputs){
+    public long run(char mode, int[] inputs){
         int inputIndex = 0;
 
         while(i < workingMemory.length){
-            int command = workingMemory[i];
+            int command = Math.toIntExact(workingMemory[i]);
 
             if(command == 99){
                 this.workingMemory = originalMemory.clone();
@@ -187,7 +198,7 @@ public class IntCode {
                 break;
             }
 
-            int operation = (command%10>0?command%10:command);
+            long operation = (command%10>0?command%10:command);
 
             command = command%10>0? command /= 100: command;
 
@@ -220,7 +231,9 @@ public class IntCode {
                 i += lessThan(i, command);
             }else if(operation == 8){
                 i += equal(i, command);
-            }else{
+            }else if(operation == 9){
+                i += updateBase(i, command);
+            } else{
                 System.out.println("Unknown Command: " + operation);
                 i+=1;
             }
@@ -235,7 +248,7 @@ public class IntCode {
                 // run the program with the given inputs
                 workingMemory[1] = i;
                 workingMemory[2] = j;
-                int result = run('N', null);
+                long result = run('N', null);
 
                 if(result == output){
                     // case specific for day two test, likely to change in the future
@@ -250,7 +263,7 @@ public class IntCode {
     @Override
     public String toString() {
         String ret = "[";
-        for(int i : workingMemory){
+        for(long i : workingMemory){
             ret += i + ", ";
         }
         return ret + "]";
