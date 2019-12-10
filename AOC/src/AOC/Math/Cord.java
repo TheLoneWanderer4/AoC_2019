@@ -1,7 +1,6 @@
-import
-        java.util.Objects;
+package AOC.Math;
 
-public class Cord{
+public class Cord {
     public int x;
     public int y;
 
