@@ -8,6 +8,17 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Util {
+    public static String toString2dArray(char[][] toPrint){
+        String ret = "[\n";
+        for(char[] row : toPrint){
+            for(char point : row){
+                ret += point;
+            }
+            ret += "\n";
+        }
+        return ret + "]";
+    }
+
     public static String  printArray(int[] array){
         String ret = "[";
         for(int x : array){

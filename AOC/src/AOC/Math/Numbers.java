@@ -1,4 +1,4 @@
-package AOC;
+package AOC.Math;
 
 public class Numbers {
     public static boolean hasAdjacent(int num){
