@@ -85,17 +85,6 @@ public class Main {
         return goodVectors;
     }
 
-    public static String toString2dArray(char[][] toPrint){
-        String ret = "[\n";
-        for(char[] row : toPrint){
-            for(char point : row){
-                ret += point;
-            }
-            ret += "\n";
-        }
-        return ret + "]";
-    }
-
     public static Cord mostDetectableAsteroids(List<Cord> asteroids){
         int ret = Integer.MIN_VALUE;
         Cord max = null;

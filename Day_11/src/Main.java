@@ -1,3 +1,4 @@
+import AOC.PainterBot;
 import AOC.Util;
 
 public class Main {

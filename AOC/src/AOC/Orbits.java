@@ -1,5 +1,7 @@
 package AOC;
 
+import AOC.Structures.UnDGraph;
+
 import java.util.ArrayList;
 import java.util.List;
 

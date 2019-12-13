@@ -207,7 +207,7 @@ public class IntCode {
             }else if(operation == 2){
                 i += multiply(i, command);
             }else if(operation == 3){
-                if(mode == 'N'){
+                if(mode == 'N' || inputs == null){
                     i += input(i, command);
                 }else if(mode == 'S'){
                     i += input(i, command, inputs[inputIndex]);

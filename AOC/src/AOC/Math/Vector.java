@@ -3,10 +3,26 @@ package AOC.Math;
 public class Vector implements Comparable{
     private int i;
     private int j;
+    private int k;
 
+    /*
+    This constructor is used for the lasers, at some point fix that program
     public Vector(int j, int i){
         this.i = i;
         this.j = j*-1;
+    }
+     */
+
+    public Vector(int i, int j, int k){
+        this.i = i;
+        this.j = j;
+        this.k = k;
+    }
+
+    public Vector(Vector v){
+        i = v.getI();
+        j = v.getJ();
+        k = v.getK();
     }
 
     public int getI(){
@@ -15,6 +31,22 @@ public class Vector implements Comparable{
 
     public int getJ(){
         return j;
+    }
+
+    public int getK(){
+        return k;
+    }
+
+    public void setI(int newI){
+        i = newI;
+    }
+
+    public void setJ(int newJ){
+        j = newJ;
+    }
+
+    public void setK(int newK){
+        k = newK;
     }
 
     public boolean sameDirection(Vector vector){
@@ -31,11 +63,11 @@ public class Vector implements Comparable{
     }
 
     public boolean equals(Vector v){
-        return i == v.i && j == v.j;
+        return i == v.i && j == v.j && k == v.k;
     }
 
     public String toString(){
-        return  "<" + i + "," + j + ">";
+        return  "<" + i + "," + j + "," + k +">";
     }
 
     public double angleWithJ(){

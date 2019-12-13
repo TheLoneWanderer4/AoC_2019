@@ -1,6 +1,26 @@
 package AOC.Math;
 
 public class Numbers {
+
+    public static long gcf(long a, long b) {
+        while (a != b) // while the two numbers are not equal...
+        {
+            // ...subtract the smaller one from the larger one
+
+            if (a > b) a -= b; // if a is larger than b, subtract b from a
+            else b -= a; // if b is larger than a, subtract a from b
+        }
+
+        return a; // or return b, a will be equal to b either way
+    }
+
+    public static long lcm(long a, long b) {
+        // the lcm is simply (a * b) divided by the gcf of the two
+
+        return (a * b) / gcf(a, b);
+    }
+
+
     public static boolean hasAdjacent(int num){
         return hasAdjacentHelp(num/10,num%10);
     }
