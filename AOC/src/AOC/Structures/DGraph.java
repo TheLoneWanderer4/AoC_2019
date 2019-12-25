@@ -3,7 +3,7 @@ package AOC.Structures;
 import java.util.*;
 
 /**
- * AOC.DGraph.java
+ * AOC.Structures.DGraph.java
  * 
  * Represents a directed graph. The nodes are represented as
  * integers ranging from 1 to num_nodes inclusive.
@@ -11,8 +11,8 @@ import java.util.*;
  * 
  * Usage instructions:
  * 
- * Construct a AOC.DGraph
- * AOC.DGraph graph = new AOC.DGraph(numNodes);
+ * Construct a AOC.Structures.DGraph
+ * AOC.Structures.DGraph graph = new AOC.Structures.DGraph(numNodes);
  * 
  * Add an edge
  * graph.addEdge(v, w, weight);
@@ -23,7 +23,7 @@ import java.util.*;
  * List<Integer> list = graph.getNeighbors(v);
  * 
  */
-public class UnDGraph {
+public class DGraph {
     /*
      * Private Instance Variables
      *
@@ -35,12 +35,16 @@ public class UnDGraph {
     private Set<Edge> edges;
 
     /*
-     * Constructs an instance of the AOC.DGraph class with # nodes numNodes.
+     * Constructs an instance of the AOC.Structures.DGraph class with # nodes numNodes.
      */
-    public UnDGraph() {
-        this.numNodes = 0;
-        nodes = new HashSet<>();
-        edges = new HashSet<>();
+    public DGraph(int numNodes) {
+        this.numNodes = numNodes;
+        nodes = new HashSet<String>();
+        edges = new TreeSet<>();
+    }
+
+    public Set<Edge> getEdges(){
+        return edges;
     }
 
     /**
@@ -50,14 +54,13 @@ public class UnDGraph {
      * @param v
      * @param w
      */
-    public void addEdge(String v, String w) {
+    public void addEdge(String v, String w, double distance) {
         int startSize = nodes.size();
         nodes.add(v);
         nodes.add(w);
         int endSize = nodes.size();
         numNodes += endSize - startSize;
-        edges.add(new Edge(w, v));
-        edges.add(new Edge(v, w));
+        edges.add(new Edge(v, w, distance));
     }
 
     /*
@@ -70,7 +73,7 @@ public class UnDGraph {
     // Returns the weight for the given edge.
     // Returns -1 if there is no edge between the nodes v and w.
     public double getWeight(String v, String w) {
-        Edge testEdge = new Edge(v, w);
+        Edge testEdge = new Edge(v, w, 0.0);
         for(Edge edge : edges){
             if(edge.equals(testEdge)){
                 return edge.weight;
@@ -116,7 +119,7 @@ public class UnDGraph {
     /**
      * Immutable undirected edges.
      */
-    public class Edge{ // implements Comparable<Edge> {
+    public class Edge implements Comparable<Edge> {
 
         // Nodes in edge and weight on edge
         private final String node1;
@@ -126,14 +129,14 @@ public class UnDGraph {
         /**
          * Stores the given nodes with smaller id first.
          * 
-         * @param node1 start of the edge
-         * @param node2 end of the edge
+         * @param node1
+         * @param node2
          */
-        public Edge(String node1, String node2) {
-            //assert weight >= 0.0;
+        public Edge(String node1, String node2, double weight) {
+            assert weight >= 0.0;
             this.node1 = node1;
             this.node2 = node2;
-            this.weight = 0;
+            this.weight = weight;
         }
 
         /**
@@ -147,12 +150,26 @@ public class UnDGraph {
         /**
          * Lexicographical ordering on edges (node1,node2).
          */
+        public int compareTo(Edge other) {
+            if (this.equals(other)) {
+                return 0; // this and other are equal
+            } else if ((node1.compareTo(other.node1) < 0)
+                    || (node1.equals(other.node1) && node2.compareTo(other.node2) < 0)) {
+                return -1; // this is less than other
+            } else {
+                return 1; // this is greater than other
+            }
+        }
+
+        /**
+         * Lexicographical ordering on edges (node1,node2).
+         */
         public boolean equals(Object o) {
             if (!(o instanceof Edge)) {
                 return false;
             }
             Edge other = (Edge) o;
-            return (node1.equals(other.node1)) && (node2.equals(other.node2));
+            return node1.equals(other.node1) && node2.equals(other.node2);
         }
 
         /**
